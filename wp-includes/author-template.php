@@ -24,7 +24,7 @@ function get_the_author($deprecated = '') {
 	global $authordata;
 
 	if ( !empty( $deprecated ) )
-		_deprecated_argument( __FUNCTION__, '2.1' );
+		_deprecated_argument( __FUNCTION__, '2.1.0' );
 
 	/**
 	 * Filters the display name of the current post's author.
@@ -57,11 +57,11 @@ function get_the_author($deprecated = '') {
  */
 function the_author( $deprecated = '', $deprecated_echo = true ) {
 	if ( ! empty( $deprecated ) ) {
-		_deprecated_argument( __FUNCTION__, '2.1' );
+		_deprecated_argument( __FUNCTION__, '2.1.0' );
 	}
 
 	if ( true !== $deprecated_echo ) {
-		_deprecated_argument( __FUNCTION__, '1.5',
+		_deprecated_argument( __FUNCTION__, '1.5.0',
 			/* translators: %s: get_the_author() */
 			sprintf( __( 'Use %s instead if you do not want the value echoed.' ),
 				'<code>get_the_author()</code>'
@@ -188,7 +188,12 @@ function the_author_meta( $field = '', $user_id = false ) {
  */
 function get_the_author_link() {
 	if ( get_the_author_meta('url') ) {
-		return '<a href="' . esc_url( get_the_author_meta('url') ) . '" title="' . esc_attr( sprintf(__("Visit %s&#8217;s website"), get_the_author()) ) . '" rel="author external">' . get_the_author() . '</a>';
+		return sprintf( '<a href="%1$s" title="%2$s" rel="author external">%3$s</a>',
+			esc_url( get_the_author_meta('url') ),
+			/* translators: %s: author's display name */
+			esc_attr( sprintf( __( 'Visit %s&#8217;s website' ), get_the_author() ) ),
+			get_the_author()
+		);
 	} else {
 		return get_the_author();
 	}
@@ -250,9 +255,9 @@ function get_the_author_posts_link() {
 		return;
 	}
 
-	$link = sprintf(
-		'<a href="%1$s" title="%2$s" rel="author">%3$s</a>',
+	$link = sprintf( '<a href="%1$s" title="%2$s" rel="author">%3$s</a>',
 		esc_url( get_author_posts_url( $authordata->ID, $authordata->user_nicename ) ),
+		/* translators: %s: author's display name */
 		esc_attr( sprintf( __( 'Posts by %s' ), get_the_author() ) ),
 		get_the_author()
 	);
@@ -277,7 +282,7 @@ function get_the_author_posts_link() {
  */
 function the_author_posts_link( $deprecated = '' ) {
 	if ( ! empty( $deprecated ) ) {
-		_deprecated_argument( __FUNCTION__, '2.1' );
+		_deprecated_argument( __FUNCTION__, '2.1.0' );
 	}
 	echo get_the_author_posts_link();
 }
@@ -412,7 +417,12 @@ function wp_list_authors( $args = '' ) {
 			$return .= '<li>';
 		}
 
-		$link = '<a href="' . get_author_posts_url( $author->ID, $author->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $author->display_name) ) . '">' . $name . '</a>';
+		$link = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+			get_author_posts_url( $author->ID, $author->user_nicename ),
+			/* translators: %s: author's display name */
+			esc_attr( sprintf( __( 'Posts by %s' ), $author->display_name ) ),
+			$name
+		);
 
 		if ( ! empty( $args['feed_image'] ) || ! empty( $args['feed'] ) ) {
 			$link .= ' ';
