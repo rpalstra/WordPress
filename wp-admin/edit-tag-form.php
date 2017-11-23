@@ -74,9 +74,8 @@ do_action( "{$taxonomy}_pre_edit_form", $tag, $taxonomy ); ?>
 <div id="message" class="updated">
 	<p><strong><?php echo $message; ?></strong></p>
 	<?php if ( $wp_http_referer ) { ?>
-	<p><a href="<?php echo esc_url( $wp_http_referer ); ?>"><?php
-		/* translators: %s: taxonomy name */
-		printf( _x( '&larr; Back to %s', 'admin screen' ), $tax->labels->name );
+	<p><a href="<?php echo esc_url( wp_validate_redirect( esc_url_raw( $wp_http_referer ), admin_url( 'term.php?taxonomy=' . $taxonomy ) ) ); ?>"><?php
+		echo esc_html( $tax->labels->back_to_items );
 	?></a></p>
 	<?php } ?>
 </div>
@@ -114,11 +113,16 @@ wp_nonce_field( 'update-tag_' . $tag_ID );
  * @param string $taxonomy Current $taxonomy slug.
  */
 do_action( "{$taxonomy}_term_edit_form_top", $tag, $taxonomy );
+
+$tag_name_value = '';
+if ( isset( $tag->name ) ) {
+	$tag_name_value = esc_attr( $tag->name );
+}
 ?>
 	<table class="form-table">
 		<tr class="form-field form-required term-name-wrap">
 			<th scope="row"><label for="name"><?php _ex( 'Name', 'term name' ); ?></label></th>
-			<td><input name="name" id="name" type="text" value="<?php if ( isset( $tag->name ) ) echo esc_attr($tag->name); ?>" size="40" aria-required="true" />
+			<td><input name="name" id="name" type="text" value="<?php echo $tag_name_value; ?>" size="40" aria-required="true" />
 			<p class="description"><?php _e('The name is how it appears on your site.'); ?></p></td>
 		</tr>
 <?php if ( !global_terms_enabled() ) { ?>
@@ -254,9 +258,20 @@ if ( 'category' == $taxonomy ) {
  * @param string $taxonomy Current taxonomy slug.
  */
 do_action( "{$taxonomy}_edit_form", $tag, $taxonomy );
-
-submit_button( __('Update') );
 ?>
+
+<div class="edit-tag-actions">
+
+	<?php submit_button( __( 'Update' ), 'primary', null, false ); ?>
+
+	<?php if ( current_user_can( 'delete_term', $tag->term_id ) ) : ?>
+		<span id="delete-link">
+			<a class="delete" href="<?php echo admin_url( wp_nonce_url( "edit-tags.php?action=delete&taxonomy=$taxonomy&tag_ID=$tag->term_id", 'delete-tag_' . $tag->term_id ) ) ?>"><?php _e( 'Delete' ); ?></a>
+		</span>
+	<?php endif; ?>
+
+</div>
+
 </form>
 </div>
 
