@@ -240,7 +240,7 @@ final class WP_Customize_Manager {
 	 * Constructor.
 	 *
 	 * @since 3.4.0
-	 * @since 4.7.0 Added $args param.
+	 * @since 4.7.0 Added `$args` parameter.
 	 *
 	 * @param array $args {
 	 *     Args.
@@ -447,7 +447,7 @@ final class WP_Customize_Manager {
 		}
 
 		if ( ! $message ) {
-			$message = __( 'Cheatin&#8217; uh?' );
+			$message = __( 'An error has occurred.' );
 		}
 
 		if ( $this->messenger_channel ) {
@@ -512,7 +512,7 @@ final class WP_Customize_Manager {
 				auth_redirect();
 			} else {
 				wp_die(
-					'<h1>' . __( 'Cheatin&#8217; uh?' ) . '</h1>' .
+					'<h1>' . __( 'You don&#8217;t have permission to do this.' ) . '</h1>' .
 					'<p>' . __( 'Sorry, you are not allowed to customize this site.' ) . '</p>',
 					403
 				);
@@ -1683,7 +1683,7 @@ final class WP_Customize_Manager {
 	 * incoming post data.
 	 *
 	 * @since 4.1.1
-	 * @since 4.7.0 Added $args param and merging with changeset values and stashed theme mods.
+	 * @since 4.7.0 Added `$args` parameter and merging with changeset values and stashed theme mods.
 	 *
 	 * @param array $args {
 	 *     Args.
