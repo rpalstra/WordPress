@@ -1540,7 +1540,7 @@ function comments_popup_link( $zero = false, $one = false, $more = false, $css_c
 	}
 
 	if ( false === $more ) {
-		/* translators: 1: Number of comments 2: post title */
+		/* translators: 1: number of comments, 2: post title */
 		$more = _n( '%1$s Comment<span class="screen-reader-text"> on %2$s</span>', '%1$s Comments<span class="screen-reader-text"> on %2$s</span>', $number );
 		$more = sprintf( $more, number_format_i18n( $number ), $title );
 	}
@@ -1629,7 +1629,7 @@ function get_comment_reply_link( $args = array(), $comment = null, $post = null 
 		'add_below'     => 'comment',
 		'respond_id'    => 'respond',
 		'reply_text'    => __( 'Reply' ),
-		/* translators: Comment reply button text. 1: Comment author name */
+		/* translators: Comment reply button text. %s: Comment author name */
 		'reply_to_text' => __( 'Reply to %s' ),
 		'login_text'    => __( 'Log in to Reply' ),
 		'max_depth'     => 0,
@@ -2260,13 +2260,17 @@ function comment_form( $args = array(), $post_id = null ) {
 	$req      = get_option( 'require_name_email' );
 	$html_req = ( $req ? " required='required'" : '' );
 	$html5    = 'html5' === $args['format'];
+	$consent  = empty( $commenter['comment_author_email'] ) ? '' : ' checked="checked"';
 	$fields   = array(
-		'author' => '<p class="comment-form-author">' . '<label for="author">' . __( 'Name' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
-					'<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30" maxlength="245"' . $html_req . ' /></p>',
-		'email'  => '<p class="comment-form-email"><label for="email">' . __( 'Email' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
-					'<input id="email" name="email" ' . ( $html5 ? 'type="email"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_email'] ) . '" size="30" maxlength="100" aria-describedby="email-notes"' . $html_req . ' /></p>',
-		'url'    => '<p class="comment-form-url"><label for="url">' . __( 'Website' ) . '</label> ' .
-					'<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" size="30" maxlength="200" /></p>',
+		'author'  => '<p class="comment-form-author">' . '<label for="author">' . __( 'Name' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
+					 '<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30" maxlength="245"' . $html_req . ' /></p>',
+		'email'   => '<p class="comment-form-email"><label for="email">' . __( 'Email' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
+					 '<input id="email" name="email" ' . ( $html5 ? 'type="email"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_email'] ) . '" size="30" maxlength="100" aria-describedby="email-notes"' . $html_req . ' /></p>',
+		'url'     => '<p class="comment-form-url"><label for="url">' . __( 'Website' ) . '</label> ' .
+					 '<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" size="30" maxlength="200" /></p>',
+		'cookies' => '<p class="comment-form-cookies-consent"><label for="wp-comment-cookies-consent">' .
+					 '<input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' />' .
+					 __( 'Save my name, email, and site URL in my browser for next time I post a comment.' ) . '</label></p>',
 	);
 
 	$required_text = sprintf( ' ' . __( 'Required fields are marked %s' ), '<span class="required">*</span>' );

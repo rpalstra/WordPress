@@ -487,7 +487,7 @@ function wp_set_wpdb_vars() {
 	if ( is_wp_error( $prefix ) ) {
 		wp_load_translations_early();
 		wp_die(
-			/* translators: 1: $table_prefix 2: wp-config.php */
+			/* translators: 1: $table_prefix, 2: wp-config.php */
 			sprintf(
 				__( '<strong>ERROR</strong>: %1$s in %2$s can only contain numbers, letters, and underscores.' ),
 				'<code>$table_prefix</code>',
@@ -653,14 +653,14 @@ function wp_get_mu_plugins() {
  *
  * While upgrading or installing WordPress, no plugins are returned.
  *
- * The default directory is wp-content/plugins. To change the default
+ * The default directory is `wp-content/plugins`. To change the default
  * directory manually, define `WP_PLUGIN_DIR` and `WP_PLUGIN_URL`
- * in wp-config.php.
+ * in `wp-config.php`.
  *
  * @since 3.0.0
  * @access private
  *
- * @return array Files.
+ * @return string[] $plugin_file Array of paths to plugin files relative to the plugins directory.
  */
 function wp_get_active_and_valid_plugins() {
 	$plugins        = array();
