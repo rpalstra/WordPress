@@ -2,13 +2,13 @@
  * Handles the addition of the comment form.
  *
  * @since 2.7.0
+ * @output wp-includes/js/comment-reply.js
  *
  * @namespace addComment
  *
  * @type {Object}
  */
-var addComment;
-addComment = ( function( window ) {
+window.addComment = ( function( window ) {
 	// Avoid scope lookups on commonly used variables.
 	var document = window.document;
 
@@ -50,7 +50,7 @@ addComment = ( function( window ) {
 	 * required to move the comment form. To allow for lazy loading of
 	 * comments this method is exposed as window.commentReply.init().
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @memberOf addComment
 	 *
@@ -87,7 +87,7 @@ addComment = ( function( window ) {
 	/**
 	 * Return all links classed .comment-reply-link.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} context The parent DOM element to search for links.
 	 *
@@ -117,7 +117,7 @@ addComment = ( function( window ) {
 	/**
 	 * Cancel event handler.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {Event} event The calling event.
 	 */
@@ -142,7 +142,7 @@ addComment = ( function( window ) {
 	/**
 	 * Click event handler.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {Event} event The calling event.
 	 */
@@ -169,7 +169,7 @@ addComment = ( function( window ) {
 	 *
 	 * Uses element.dataset if it exists, otherwise uses getAttribute.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} Element DOM element with the attribute.
 	 * @param {String}      Attribute the attribute to get.
@@ -190,7 +190,7 @@ addComment = ( function( window ) {
 	 *
 	 * Local alias for document.getElementById.
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
 	 * @param {HTMLElement} The requested element.
 	 */
