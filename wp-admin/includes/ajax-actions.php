@@ -3651,13 +3651,13 @@ function wp_ajax_crop_image() {
 			$cropped = apply_filters( 'wp_create_file_in_uploads', $cropped, $attachment_id ); // For replication.
 
 			$parent_url = wp_get_attachment_url( $attachment_id );
-			$url        = str_replace( basename( $parent_url ), basename( $cropped ), $parent_url );
+			$url        = str_replace( wp_basename( $parent_url ), wp_basename( $cropped ), $parent_url );
 
 			$size       = @getimagesize( $cropped );
 			$image_type = ( $size ) ? $size['mime'] : 'image/jpeg';
 
 			$object = array(
-				'post_title'     => basename( $cropped ),
+				'post_title'     => wp_basename( $cropped ),
 				'post_content'   => $url,
 				'post_mime_type' => $image_type,
 				'guid'           => $url,
@@ -4452,7 +4452,7 @@ function wp_ajax_wp_privacy_export_personal_data() {
 	}
 
 	if ( ! current_user_can( 'export_others_personal_data' ) ) {
-		wp_send_json_error( __( 'Invalid request.' ) );
+		wp_send_json_error( __( 'Sorry, you are not allowed to perform this action.' ) );
 	}
 
 	check_ajax_referer( 'wp-privacy-export-personal-data-' . $request_id, 'security' );
@@ -4634,7 +4634,7 @@ function wp_ajax_wp_privacy_erase_personal_data() {
 
 	// Both capabilities are required to avoid confusion, see `_wp_personal_data_removal_page()`.
 	if ( ! current_user_can( 'erase_others_personal_data' ) || ! current_user_can( 'delete_users' ) ) {
-		wp_send_json_error( __( 'Invalid request.' ) );
+		wp_send_json_error( __( 'Sorry, you are not allowed to perform this action.' ) );
 	}
 
 	check_ajax_referer( 'wp-privacy-erase-personal-data-' . $request_id, 'security' );
