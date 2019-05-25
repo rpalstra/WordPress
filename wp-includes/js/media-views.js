@@ -248,6 +248,7 @@ media.view.SiteIconCropper = __webpack_require__( 101 );
 media.view.SiteIconPreview = __webpack_require__( 102 );
 media.view.EditImage = __webpack_require__( 103 );
 media.view.Spinner = __webpack_require__( 104 );
+media.view.Heading = __webpack_require__( 105 );
 
 
 /***/ }),
@@ -4515,8 +4516,11 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 		'keydown': 'constrainTabbing'
 	},
 
-	focus: function() { // Reset focus on first left menu item
-		this.$('.media-menu-item').first().focus();
+	/**
+	 * Moves focus to the first visible menu item in the modal.
+	 */
+	focus: function() {
+		this.$( '.media-menu-item' ).filter( ':visible' ).first().focus();
 	},
 	/**
 	 * @param {Object} event
@@ -5164,18 +5168,15 @@ UploaderStatus = View.extend(/** @lends wp.media.view.UploaderStatus.prototype *
 		}), { at: 0 });
 	},
 
-	/**
-	 * @param {Object} event
-	 */
-	dismiss: function( event ) {
+	dismiss: function() {
 		var errors = this.views.get('.upload-errors');
-
-		event.preventDefault();
 
 		if ( errors ) {
 			_.invoke( errors, 'remove' );
 		}
 		wp.Uploader.errors.reset();
+		// Keep focus within the modal after the dismiss button gets removed from the DOM.
+		this.controller.modal.focusManager.focus();
 	}
 });
 
@@ -7556,6 +7557,9 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 		 */
 		this.createToolbar();
 
+		// Add a heading before the attachments list.
+		this.createAttachmentsHeading();
+
 		// Create the list of attachments.
 		this.createAttachments();
 
@@ -7679,7 +7683,7 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 				filters: Filters,
 				style: 'primary',
 				disabled: true,
-				text: mediaTrash ? l10n.trashSelected : l10n.deleteSelected,
+				text: mediaTrash ? l10n.trashSelected : l10n.deletePermanently,
 				controller: this.controller,
 				priority: -60,
 				click: function() {
@@ -7739,7 +7743,7 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 					filters: Filters,
 					style: 'primary',
 					disabled: true,
-					text: l10n.deleteSelected,
+					text: l10n.deletePermanently,
 					controller: this.controller,
 					priority: -55,
 					click: function() {
@@ -7900,6 +7904,15 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 
 			this.views.add( this.attachmentsNoResults );
 		}
+	},
+
+	createAttachmentsHeading: function() {
+		this.attachmentsHeading = new wp.media.view.Heading( {
+			text: l10n.attachmentsList,
+			level: 'h2',
+			className: 'media-views-heading screen-reader-text'
+		} );
+		this.views.add( this.attachmentsHeading );
 	},
 
 	createSidebar: function() {
@@ -8470,23 +8483,10 @@ Details = Attachment.extend(/** @lends wp.media.view.Attachment.Details.prototyp
 			rerenderOnModelChange: false
 		});
 
-		this.on( 'ready', this.initialFocus );
 		// Call 'initialize' directly on the parent class.
 		Attachment.prototype.initialize.apply( this, arguments );
 	},
 
-	initialFocus: function() {
-		if ( ! wp.media.isTouchDevice ) {
-			/*
-			Previously focused the first ':input' (the readonly URL text field).
-			Since the first ':input' is now a button (delete/trash): when pressing
-			spacebar on an attachment, Firefox fires deleteAttachment/trashAttachment
-			as soon as focus is moved. Explicitly target the first text field for now.
-			@todo change initial focus logic, also for accessibility.
-			*/
-			this.$( 'input[type="text"]' ).eq( 0 ).focus();
-		}
-	},
 	/**
 	 * @param {Object} event
 	 */
@@ -9521,6 +9521,46 @@ var Spinner = wp.media.View.extend(/** @lends wp.media.view.Spinner.prototype */
 });
 
 module.exports = Spinner;
+
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports) {
+
+/**
+ * wp.media.view.Heading
+ *
+ * A reusable heading component for the media library
+ *
+ * Used to add accessibility friendly headers in the media library/modal.
+ *
+ * @class
+ * @augments wp.media.View
+ * @augments wp.Backbone.View
+ * @augments Backbone.View
+ */
+var Heading = wp.media.View.extend( {
+	tagName: function() {
+		return this.options.level || 'h1';
+	},
+	className: 'media-views-heading',
+
+	initialize: function() {
+
+		if ( this.options.className ) {
+			this.$el.addClass( this.options.className );
+		}
+
+		this.text = this.options.text;
+	},
+
+	render: function() {
+		this.$el.html( this.text );
+		return this;
+	}
+} );
+
+module.exports = Heading;
 
 
 /***/ })

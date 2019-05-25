@@ -291,9 +291,7 @@ function wp_dashboard_right_now() {
 		<?php
 		$moderated_comments_count_i18n = number_format_i18n( $num_comm->moderated );
 		/* translators: %s: number of comments in moderation */
-		$text = sprintf( _nx( '%s in moderation', '%s in moderation', $num_comm->moderated, 'comments' ), $moderated_comments_count_i18n );
-		/* translators: %s: number of comments in moderation */
-		$aria_label = sprintf( _nx( '%s comment in moderation', '%s comments in moderation', $num_comm->moderated, 'comments' ), $moderated_comments_count_i18n );
+		$text = sprintf( _n( '%s Comment in moderation', '%s Comments in moderation', $num_comm->moderated ), $moderated_comments_count_i18n );
 		?>
 		<li class="comment-mod-count
 		<?php
@@ -301,7 +299,7 @@ function wp_dashboard_right_now() {
 			echo ' hidden';
 		}
 		?>
-		"><a href="edit-comments.php?comment_status=moderated" aria-label="<?php echo esc_attr( $aria_label ); ?>"><?php echo $text; ?></a></li>
+		"><a href="edit-comments.php?comment_status=moderated" class="comments-in-moderation-text"><?php echo $text; ?></a></li>
 		<?php
 	}
 
@@ -519,8 +517,7 @@ function wp_dashboard_quick_press( $error_msg = false ) {
 		<?php endif; ?>
 
 		<div class="input-text-wrap" id="title-wrap">
-			<label class="screen-reader-text prompt" for="title" id="title-prompt-text">
-
+			<label for="title">
 				<?php
 				/** This filter is documented in wp-admin/edit-form-advanced.php */
 				echo apply_filters( 'enter_title_here', __( 'Title' ), $post );
@@ -530,8 +527,8 @@ function wp_dashboard_quick_press( $error_msg = false ) {
 		</div>
 
 		<div class="textarea-wrap" id="description-wrap">
-			<label class="screen-reader-text prompt" for="content" id="content-prompt-text"><?php _e( 'What&#8217;s on your mind?' ); ?></label>
-			<textarea name="content" id="content" class="mceEditor" rows="3" cols="15" autocomplete="off"></textarea>
+			<label for="content"><?php _e( 'Content' ); ?></label>
+			<textarea name="content" id="content" placeholder="<?php esc_attr_e( 'What&#8217;s on your mind?' ); ?>" class="mceEditor" rows="3" cols="15" autocomplete="off"></textarea>
 		</div>
 
 		<p class="submit">
@@ -858,8 +855,9 @@ function wp_dashboard_recent_posts( $args ) {
 
 		echo '<ul>';
 
-		$today    = date( 'Y-m-d', current_time( 'timestamp' ) );
-		$tomorrow = date( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) );
+		$today    = current_time( 'Y-m-d' );
+		$tomorrow = gmdate( 'Y-m-d', strtotime( '+1 day', current_time( 'timestamp' ) ) );
+		$year     = current_time( 'Y' );
 
 		while ( $posts->have_posts() ) {
 			$posts->the_post();
@@ -869,7 +867,7 @@ function wp_dashboard_recent_posts( $args ) {
 				$relative = __( 'Today' );
 			} elseif ( date( 'Y-m-d', $time ) == $tomorrow ) {
 				$relative = __( 'Tomorrow' );
-			} elseif ( date( 'Y', $time ) !== date( 'Y', current_time( 'timestamp' ) ) ) {
+			} elseif ( date( 'Y', $time ) !== $year ) {
 				/* translators: date and time format for recent posts on the dashboard, from a different calendar year, see https://secure.php.net/date */
 				$relative = date_i18n( __( 'M jS Y' ), $time );
 			} else {
@@ -1630,7 +1628,7 @@ function wp_dashboard_php_nag() {
 	<p><?php echo $msg; ?></p>
 
 	<h3><?php _e( 'What is PHP and how does it affect my site?' ); ?></h3>
-	<p><?php _e( 'PHP is the programming language we use to build and maintain WordPress. Newer versions of PHP are both faster and more secure, so updating will have a positive effect on your site’s performance.' ); ?></p>
+	<p><?php _e( 'PHP is the programming language we use to build and maintain WordPress. Newer versions of PHP are both faster and more secure, so updating will have a positive effect on your site&#8217;s performance.' ); ?></p>
 
 	<p class="button-container">
 		<?php
@@ -1646,6 +1644,7 @@ function wp_dashboard_php_nag() {
 	<?php
 
 	wp_update_php_annotation();
+	wp_direct_php_update_button();
 }
 
 /**

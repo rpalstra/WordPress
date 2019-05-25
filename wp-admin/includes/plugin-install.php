@@ -175,7 +175,7 @@ function plugins_api( $action, $args = array() ) {
 				sprintf(
 					/* translators: %s: support forums URL */
 					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
-					__( 'https://wordpress.org/support/' )
+					__( 'https://wordpress.org/support/forums/' )
 				) . ' ' . __( '(WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)' ),
 				headers_sent() || WP_DEBUG ? E_USER_WARNING : E_USER_NOTICE
 			);
@@ -188,7 +188,7 @@ function plugins_api( $action, $args = array() ) {
 				sprintf(
 					/* translators: %s: support forums URL */
 					__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
-					__( 'https://wordpress.org/support/' )
+					__( 'https://wordpress.org/support/forums/' )
 				),
 				$request->get_error_message()
 			);
@@ -203,7 +203,7 @@ function plugins_api( $action, $args = array() ) {
 					sprintf(
 						/* translators: %s: support forums URL */
 						__( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="%s">support forums</a>.' ),
-						__( 'https://wordpress.org/support/' )
+						__( 'https://wordpress.org/support/forums/' )
 					),
 					wp_remote_retrieve_body( $request )
 				);
@@ -754,11 +754,12 @@ function install_plugin_information() {
 	</div>
 	<div id="section-holder" class="wrap">
 	<?php
-	$wp_version = get_bloginfo( 'version' );
+	$requires_php = isset( $api->requires_php ) ? $api->requires_php : null;
+	$requires_wp  = isset( $api->requires ) ? $api->requires : null;
 
-	$compatible_php = ( empty( $api->requires_php ) || version_compare( phpversion(), $api->requires_php, '>=' ) );
-	$tested_wp      = ( empty( $api->tested ) || version_compare( $wp_version, $api->tested, '<=' ) );
-	$compatible_wp  = ( empty( $api->requires ) || version_compare( $wp_version, $api->requires, '>=' ) );
+	$compatible_php = is_php_version_compatible( $requires_php );
+	$compatible_wp  = is_wp_version_compatible( $requires_wp );
+	$tested_wp      = ( empty( $api->tested ) || version_compare( get_bloginfo( 'version' ), $api->tested, '<=' ) );
 
 	if ( ! $compatible_php ) {
 		echo '<div class="notice notice-error notice-alt"><p>';
@@ -769,8 +770,8 @@ function install_plugin_information() {
 				' ' . __( '<a href="%s" target="_blank">Click here to learn more about updating PHP</a>.' ),
 				esc_url( wp_get_update_php_url() )
 			);
-			echo '</p>';
-			wp_update_php_annotation();
+
+			wp_update_php_annotation( '</p><p><em>', '</em>' );
 		} else {
 			echo '</p>';
 		}
@@ -827,7 +828,14 @@ function install_plugin_information() {
 				break;
 			case 'update_available':
 				if ( $status['url'] ) {
-					echo '<a data-slug="' . esc_attr( $api->slug ) . '" data-plugin="' . esc_attr( $status['file'] ) . '" id="plugin_update_from_iframe" class="button button-primary right" href="' . $status['url'] . '" target="_parent">' . __( 'Install Update Now' ) . '</a>';
+					if ( $compatible_php ) {
+						echo '<a data-slug="' . esc_attr( $api->slug ) . '" data-plugin="' . esc_attr( $status['file'] ) . '" id="plugin_update_from_iframe" class="button button-primary right" href="' . $status['url'] . '" target="_parent">' . __( 'Install Update Now' ) . '</a>';
+					} else {
+						printf(
+							'<button type="button" class="button button-primary button-disabled right" disabled="disabled">%s</button>',
+							_x( 'Cannot Update', 'plugin' )
+						);
+					}
 				}
 				break;
 			case 'newer_installed':

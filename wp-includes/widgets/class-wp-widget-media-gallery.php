@@ -12,6 +12,7 @@
  *
  * @since 4.9.0
  *
+ * @see WP_Widget_Media
  * @see WP_Widget
  */
 class WP_Widget_Media_Gallery extends WP_Widget_Media {
@@ -228,7 +229,7 @@ class WP_Widget_Media_Gallery extends WP_Widget_Media {
 				</ul>
 			<# } else { #>
 				<div class="attachment-media-view">
-					<p class="placeholder"><?php echo esc_html( $this->l10n['no_media_selected'] ); ?></p>
+					<button type="button" class="placeholder button-add-media"><?php echo esc_html( $this->l10n['add_media'] ); ?></button>
 				</div>
 			<# } #>
 		</script>
