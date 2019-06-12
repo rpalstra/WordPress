@@ -4242,7 +4242,7 @@ ImageDetails = Select.extend(/** @lends wp.media.view.MediaFrame.ImageDetails.pr
 			items: {
 				back: {
 					text:     l10n.back,
-					priority: 20,
+					priority: 80,
 					click:    function() {
 						if ( previous ) {
 							frame.setState( previous );
@@ -4255,7 +4255,7 @@ ImageDetails = Select.extend(/** @lends wp.media.view.MediaFrame.ImageDetails.pr
 				replace: {
 					style:    'primary',
 					text:     l10n.replace,
-					priority: 80,
+					priority: 20,
 					requires: { selection: true },
 
 					click: function() {
@@ -4318,9 +4318,10 @@ Modal = wp.media.View.extend(/** @lends wp.media.view.Modal.prototype */{
 
 	initialize: function() {
 		_.defaults( this.options, {
-			container: document.body,
-			title:     '',
-			propagate: true
+			container:      document.body,
+			title:          '',
+			propagate:      true,
+			hasCloseButton: true
 		});
 
 		this.focusManager = new wp.media.view.FocusManager({
@@ -4332,7 +4333,8 @@ Modal = wp.media.View.extend(/** @lends wp.media.view.Modal.prototype */{
 	 */
 	prepare: function() {
 		return {
-			title: this.options.title
+			title:          this.options.title,
+			hasCloseButton: this.options.hasCloseButton
 		};
 	},
 
@@ -8361,7 +8363,7 @@ AttachmentDisplay = Settings.extend(/** @lends wp.media.view.Settings.Attachment
 			attachment = this.options.attachment;
 
 		if ( 'none' === linkTo || 'embed' === linkTo || ( ! attachment && 'custom' !== linkTo ) ) {
-			$input.addClass( 'hidden' );
+			$input.closest( '.setting' ).addClass( 'hidden' );
 			return;
 		}
 
@@ -8377,7 +8379,7 @@ AttachmentDisplay = Settings.extend(/** @lends wp.media.view.Settings.Attachment
 			$input.prop( 'readonly', 'custom' !== linkTo );
 		}
 
-		$input.removeClass( 'hidden' );
+		$input.closest( '.setting' ).removeClass( 'hidden' );
 
 		// If the input is visible, focus and select its contents.
 		if ( ! wp.media.isTouchDevice && $input.is(':visible') ) {
@@ -8459,12 +8461,11 @@ Details = Attachment.extend(/** @lends wp.media.view.Attachment.Details.prototyp
 	className: 'attachment-details',
 	template:  wp.template('attachment-details'),
 
-	attributes: function() {
-		return {
-			'tabIndex':     0,
-			'data-id':      this.model.get( 'id' )
-		};
-	},
+	/*
+	 * Reset all the attributes inherited from Attachment including role=checkbox,
+	 * tabindex, etc., as they are inappropriate for this view. See #47458 and [30483] / #30390.
+	 */
+	attributes: {},
 
 	events: {
 		'change [data-setting]':          'updateSetting',
@@ -8795,6 +8796,7 @@ module.exports = Label;
 
 var View = wp.media.View,
 	$ = jQuery,
+	l10n = wp.media.view.l10n,
 	EmbedUrl;
 
 /**
@@ -8808,17 +8810,17 @@ var View = wp.media.View,
  * @augments Backbone.View
  */
 EmbedUrl = View.extend(/** @lends wp.media.view.EmbedUrl.prototype */{
-	tagName:   'label',
+	tagName:   'span',
 	className: 'embed-url',
 
 	events: {
-		'input':  'url',
-		'keyup':  'url',
-		'change': 'url'
+		'input': 'url'
 	},
 
 	initialize: function() {
-		this.$input = $('<input id="embed-url-field" type="url" />').val( this.model.get('url') );
+		this.$input = $( '<input id="embed-url-field" type="url" />' )
+			.attr( 'aria-label', l10n.insertFromUrlTitle )
+			.val( this.model.get('url') );
 		this.input = this.$input[0];
 
 		this.spinner = $('<span class="spinner" />')[0];
