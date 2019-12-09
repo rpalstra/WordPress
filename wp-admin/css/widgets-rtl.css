@@ -1,3 +1,4 @@
+/*! This file is auto-generated */
 /* General Widgets Styles */
 
 .widget {
@@ -802,7 +803,6 @@ ul.CodeMirror-hints {
 	}
 
 	div.widget {
-		margin: 0 auto !important;
 		max-width: 480px;
 	}
 
